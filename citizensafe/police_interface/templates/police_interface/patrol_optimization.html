@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}Optimisation des patrouilles{% endblock %}
+
+{% block page_title %}Optimisation des patrouilles{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-xl-12 order-xl-1">
+    <div class="card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col-8">
+            <h3 class="mb-0">Paramètres d'optimisation</h3>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label class="form-control-label" for="hour">Heure</label>
+                <input type="number" id="hour" name="hour" class="form-control" min="0" max="23" value="{{ hour }}" required>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label class="form-control-label" for="minute">Minute</label>
+                <input type="number" id="minute" name="minute" class="form-control" min="0" max="59" value="{{ minute }}" required>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label class="form-control-label" for="top_n">Nombre de zones à afficher</label>
+                <input type="number" id="top_n" name="top_n" class="form-control" min="1" max="10" value="{{ top_n }}">
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Optimiser</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-xl-6">
+    <div class="card">
+      <div class="card-header border-0">
+        <div class="row align-items-center">
+          <div class="col">
+            <h3 class="mb-0">Patrouilles optimisées</h3>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table align-items-center table-flush">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">Officier</th>
+              <th scope="col">Zone</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for patrol in optimized_patrols %}
+              <tr>
+                <td>{{ patrol.officer.user.get_full_name }}</td>
+                <td>{{ patrol.location }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="2">Aucune patrouille optimisée pour le moment.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-6">
+    <div class="card">
+      <div class="card-header border-0">
+        <div class="row align-items-center">
+          <div class="col">
+            <h3 class="mb-0">Autres zones à risque</h3>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table align-items-center table-flush">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">Zone</th>
+              <th scope="col">Probabilité</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for zone, prob in remaining_top_zones %}
+              <tr>
+                <td>{{ zone }}</td>
+                <td>{{ prob|floatformat:2 }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="2">Aucune autre zone à risque identifiée.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-xl-12">
+    <div class="card">
+      <div class="card-body">
+        <p class="mb-0">Heure actuelle : <strong>{{ current_time }}</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Ajouter des classes Argon aux champs de formulaire
+    var inputs = document.querySelectorAll('input[type="number"]');
+    inputs.forEach(function(input) {
+      input.classList.add('form-control');
+    });
+  });
+</script>
+{% endblock %}

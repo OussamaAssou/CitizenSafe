@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Créer une alerte{% endblock %}
+
+{% block page_title %}Créer une alerte{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-xl-8 order-xl-1">
+    <div class="card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col-8">
+            <h3 class="mb-0">Créer une nouvelle alerte</h3>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="form-group">
+              <label class="form-control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+              {% endif %}
+              {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <div class="row align-items-center">
+            <div class="col-8">
+              <button type="submit" class="btn btn-primary my-4">Envoyer l'alerte</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Ajouter la classe form-control à tous les champs de formulaire
+    var formFields = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], select, textarea');
+    formFields.forEach(function(field) {
+      field.classList.add('form-control');
+    });
+
+    // Ajouter la classe custom-select aux champs select
+    var selectFields = document.querySelectorAll('select');
+    selectFields.forEach(function(field) {
+      field.classList.add('custom-select');
+    });
+  });
+</script>
+{% endblock %}

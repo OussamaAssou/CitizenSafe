@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de bord police{% endblock %}
+
+{% block content %}
+<h1>Tableau de bord police</h1>
+<div class="row">
+    <div class="col-md-6">
+        <h2>Alertes actives</h2>
+        <ul class="list-group">
+            {% for alert in active_alerts %}
+                <li class="list-group-item">{{ alert.get_alert_type_display }} - {{ alert.citizen.user.username }} - {{ alert.timestamp }}</li>
+            {% empty %}
+                <li class="list-group-item">Aucune alerte active.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h2>Incidents récents</h2>
+        <ul class="list-group">
+            {% for incident in recent_incidents %}
+                <li class="list-group-item">{{ incident.get_incident_type_display }} - {{ incident.location }} - {{ incident.timestamp }}</li>
+            {% empty %}
+                <li class="list-group-item">Aucun incident récent.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<div class="mt-4">
+    <a href="{% url 'police:patrol_optimization' %}" class="btn btn-primary">Optimisation des patrouilles</a>
+    <a href="{% url 'police:create_incident_report' %}" class="btn btn-secondary">Créer un rapport d'incident</a>
+</div>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block page_title %}Inscription{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6 col-md-8">
+    <div class="card bg-secondary border-0">
+      <div class="card-header bg-transparent pb-5">
+        <div class="text-muted text-center mt-2 mb-4"><small>S'inscrire avec</small></div>
+        <div class="text-center">
+          <a href="#" class="btn btn-neutral btn-icon mr-4">
+            <span class="btn-inner--icon"><img src="/static/assets/img/icons/common/github.svg"></span>
+            <span class="btn-inner--text">Github</span>
+          </a>
+          <a href="#" class="btn btn-neutral btn-icon">
+            <span class="btn-inner--icon"><img src="/static/assets/img/icons/common/google.svg"></span>
+            <span class="btn-inner--text">Google</span>
+          </a>
+        </div>
+      </div>
+      <div class="card-body px-lg-5 py-lg-5">
+        <div class="text-center text-muted mb-4">
+          <small>Ou inscrivez-vous avec vos informations</small>
+        </div>
+        <form method="post" id="signup-form" role="form">
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="form-group" id="group_{{ field.name }}">
+              <label for="{{ field.id_for_label }}" class="form-control-label">
+                {{ field.label }}
+                {% if field.field.required %}
+                  <span class="text-danger">*</span>
+                {% endif %}
+              </label>
+              <div class="input-group input-group-merge input-group-alternative mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                </div>
+                {% if field.name == 'badge_number' %}
+                  <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-control">
+                {% else %}
+                  {{ field }}
+                {% endif %}
+              </div>
+              {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+              {% endif %}
+              {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary mt-4">S'inscrire</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var userTypeSelect = document.getElementById('id_user_type');
+    var badgeField = document.getElementById('id_badge_number');
+    var badgeGroup = document.getElementById('group_badge_number');
+
+    function toggleBadgeField() {
+        if (userTypeSelect && badgeGroup && badgeField) {
+            if (userTypeSelect.value === 'police' || userTypeSelect.value === 'postman') {
+                badgeGroup.style.display = 'block';
+                badgeField.disabled = false;
+                badgeField.required = true;
+            } else {
+                badgeGroup.style.display = 'none';
+                badgeField.disabled = true;
+                badgeField.required = false;
+                badgeField.value = ''; // Clear the field when hidden
+            }
+        }
+    }
+
+    if (userTypeSelect) {
+        userTypeSelect.addEventListener('change', toggleBadgeField);
+        toggleBadgeField(); // Call once to set initial state
+    }
+
+    // Add Argon classes to form fields
+    var formFields = document.querySelectorAll('input, select');
+    formFields.forEach(function(field) {
+        field.classList.add('form-control');
+    });
+
+    // Add icons and placeholders to form fields
+    var iconMap = {
+        'username': ['ni-single-02', 'Entrez votre nom d\'utilisateur'],
+        'first_name': ['ni-single-02', 'Entrez votre prénom'],
+        'last_name': ['ni-single-02', 'Entrez votre nom'],
+        'email': ['ni-email-83', 'Entrez votre adresse e-mail'],
+        'password1': ['ni-lock-circle-open', 'Choisissez un mot de passe'],
+        'password2': ['ni-lock-circle-open', 'Confirmez votre mot de passe'],
+        'user_type': ['ni-badge', 'Sélectionnez votre type d\'utilisateur'],
+        'badge_number': ['ni-credit-card', 'Entrez votre numéro de badge']
+    };
+
+    formFields.forEach(function(field) {
+        var iconInfo = iconMap[field.name] || ['ni-circle-08', ''];
+        var inputGroup = field.closest('.input-group');
+        if (inputGroup) {
+            var iconElement = inputGroup.querySelector('.input-group-text i');
+            if (iconElement) {
+                iconElement.className = 'ni ' + iconInfo[0];
+            }
+        }
+        field.placeholder = iconInfo[1];
+    });
+
+    console.log('Script executed'); // Debug line
+});
+</script>
+{% endblock %}

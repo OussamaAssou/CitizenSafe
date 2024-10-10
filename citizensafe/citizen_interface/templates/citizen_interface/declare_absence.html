@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block title %}Déclarer une absence{% endblock %}
+
+{% block page_title %}Déclarer une période d'absence{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-xl-8 order-xl-1">
+    <div class="card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col-8">
+            <h3 class="mb-0">Déclarer une période d'absence</h3>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-info" role="alert">
+          <h4 class="alert-heading">Pourquoi déclarer votre absence ?</h4>
+          <p>Déclarer votre absence permet d'améliorer la sécurité de votre domicile et de votre quartier. Les services de police pourront effectuer des patrouilles plus ciblées, et les facteurs seront informés pour gérer votre courrier de manière appropriée.</p>
+        </div>
+        <form method="post" id="absence-form">
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="form-group">
+              <label class="form-control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="ni {% if 'date' in field.name %}ni-calendar-grid-58{% else %}ni-single-02{% endif %}"></i>
+                  </span>
+                </div>
+                {{ field }}
+              </div>
+              {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+              {% endif %}
+              {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <div class="row align-items-center">
+            <div class="col-8">
+              <button type="submit" class="btn btn-primary my-4">Enregistrer l'absence</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Nouvelle colonne pour l'historique et les absences actives -->
+  <div class="col-xl-4 order-xl-2">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="mb-0">Absences actives</h3>
+      </div>
+      <div class="card-body">
+        {% if active_absences %}
+          <ul class="list-group list-group-flush">
+          {% for absence in active_absences %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <i class="ni ni-calendar-grid-58 text-primary mr-2"></i>
+                Du {{ absence.start_date|date:"d/m/Y" }} au {{ absence.end_date|date:"d/m/Y" }}
+              </div>
+              <form method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" name="cancel_absence" value="{{ absence.id }}" class="btn btn-sm btn-danger">
+                  Annuler
+                </button>
+              </form>
+            </li>
+          {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted">Aucune absence active.</p>
+        {% endif %}
+      </div>
+    
+    <div class="card mt-4">
+      <div class="card-header">
+        <h3 class="mb-0">Historique des absences</h3>
+      </div>
+      <div class="card-body">
+        {% if past_absences %}
+          <ul class="list-group list-group-flush">
+          {% for absence in past_absences %}
+            <li class="list-group-item">
+              <i class="ni ni-time-alarm text-info mr-2"></i>
+              Du {{ absence.start_date|date:"d/m/Y" }} au {{ absence.end_date|date:"d/m/Y" }}
+            </li>
+          {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted">Aucun historique d'absence.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Ajouter la classe form-control à tous les champs de formulaire
+    var formFields = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], input[type="date"], select, textarea');
+    formFields.forEach(function(field) {
+      field.classList.add('form-control');
+    });
+
+    // Ajouter la classe custom-select aux champs select
+    var selectFields = document.querySelectorAll('select');
+    selectFields.forEach(function(field) {
+      field.classList.add('custom-select');
+    });
+
+    // Initialiser Flatpickr pour les champs de date
+    flatpickr("input[type='date']", {
+      dateFormat: "Y-m-d",
+      minDate: "today",
+    });
+
+    // Validation côté client
+    $("#absence-form").validate({
+      rules: {
+        start_date: {
+          required: true,
+          date: true
+        },
+        end_date: {
+          required: true,
+          date: true,
+          greaterThan: "#id_start_date"
+        }
+      },
+      messages: {
+        start_date: {
+          required: "Veuillez entrer une date de début",
+          date: "Veuillez entrer une date valide"
+        },
+        end_date: {
+          required: "Veuillez entrer une date de fin",
+          date: "Veuillez entrer une date valide",
+          greaterThan: "La date de fin doit être postérieure à la date de début"
+        }
+      },
+      errorElement: 'div',
+      errorPlacement: function(error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+      },
+      highlight: function(element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function(element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+      }
+    });
+
+    // Méthode personnalisée pour comparer les dates
+    $.validator.addMethod("greaterThan", function(value, element, param) {
+      var startDate = $(param).val();
+      return Date.parse(value) > Date.parse(startDate);
+    }, "La date de fin doit être postérieure à la date de début");
+  });
+</script>
+{% endblock %}

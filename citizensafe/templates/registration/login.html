@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block page_title %}Connexion{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-5 col-md-7">
+    <div class="card bg-secondary border-0 mb-0">
+      <div class="card-header bg-transparent pb-5">
+        <div class="text-muted text-center mt-2 mb-3"><small>Se connecter avec</small></div>
+        <div class="btn-wrapper text-center">
+          <a href="#" class="btn btn-neutral btn-icon">
+            <span class="btn-inner--icon"><img src="/static/assets/img/icons/common/github.svg"></span>
+            <span class="btn-inner--text">Github</span>
+          </a>
+          <a href="#" class="btn btn-neutral btn-icon">
+            <span class="btn-inner--icon"><img src="/static/assets/img/icons/common/google.svg"></span>
+            <span class="btn-inner--text">Google</span>
+          </a>
+        </div>
+      </div>
+      <div class="card-body px-lg-5 py-lg-5">
+        <div class="text-center text-muted mb-4">
+          <small>Ou connectez-vous avec vos identifiants</small>
+        </div>
+        <form method="post" role="form">
+          {% csrf_token %}
+          <div class="form-group mb-3">
+            <div class="input-group input-group-merge input-group-alternative">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+              </div>
+              {{ form.username }}
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="input-group input-group-merge input-group-alternative">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+              </div>
+              {{ form.password }}
+            </div>
+          </div>
+          <div class="custom-control custom-control-alternative custom-checkbox">
+            <input class="custom-control-input" id="customCheckLogin" type="checkbox">
+            <label class="custom-control-label" for="customCheckLogin">
+              <span class="text-muted">Se souvenir de moi</span>
+            </label>
+          </div>
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary my-4">Se connecter</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-6">
+        <a href="{% url 'password_reset' %}" class="text-light"><small>Mot de passe oublié?</small></a>
+      </div>
+      <div class="col-6 text-right">
+        <a href="{% url 'citizen:signup' %}" class="text-light"><small>Créer un nouveau compte</small></a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Ajoutez les classes Argon aux champs de formulaire
+  document.addEventListener('DOMContentLoaded', function() {
+    var usernameField = document.getElementById('id_username');
+    var passwordField = document.getElementById('id_password');
+    
+    if (usernameField) {
+      usernameField.classList.add('form-control');
+      usernameField.placeholder = 'Nom d\'utilisateur';
+    }
+    
+    if (passwordField) {
+      passwordField.classList.add('form-control');
+      passwordField.placeholder = 'Mot de passe';
+    }
+  });
+</script>
+{% endblock %}

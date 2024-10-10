@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de bord citoyen{% endblock %}
+
+{% block content %}
+<h1>Tableau de bord citoyen</h1>
+<div class="row">
+    <div class="col-md-6">
+        <h2>Dernières alertes</h2>
+        <ul class="list-group">
+            {% for alert in user_alerts %}
+                <li class="list-group-item">{{ alert.get_alert_type_display }} - {{ alert.timestamp }}</li>
+            {% empty %}
+                <li class="list-group-item">Aucune alerte récente.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h2>Conseils de sécurité</h2>
+        {% for tip in safety_tips %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ tip.title }}</h5>
+                    <p class="card-text">{{ tip.content }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Nouvelle section pour les rapports de police et observations des facteurs -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <h2>Derniers rapports de police</h2>
+        <div class="list-group" id="police-reports">
+            {% for report in police_reports %}
+                <div class="list-group-item report-item">
+                    <h5 class="mb-1">{{ report.title }}</h5>
+                    <p class="mb-1 report-preview">{{ report.description|truncatewords:20 }}</p>
+                    <small>{{ report.timestamp|date:"d/m/Y H:i" }}</small>
+                    <div class="report-details" style="display: none;">
+                        <p>{{ report.description }}</p>
+                        <!-- Ajoutez d'autres détails ici si nécessaire -->
+                    </div>
+                </div>
+            {% empty %}
+                <p>Aucun rapport récent.</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h2>Dernières observations des facteurs</h2>
+        <div class="list-group" id="postman-observations">
+            {% for observation in postman_observations %}
+                <div class="list-group-item observation-item">
+                    <h5 class="mb-1">{{ observation.title }}</h5>
+                    <p class="mb-1 observation-preview">{{ observation.content|truncatewords:20 }}</p>
+                    <small>{{ observation.timestamp|date:"d/m/Y H:i" }}</small>
+                    <div class="observation-details" style="display: none;">
+                        <p>{{ observation.content }}</p>
+                        <!-- Ajoutez d'autres détails ici si nécessaire -->
+                    </div>
+                </div>
+            {% empty %}
+                <p>Aucune observation récente.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'citizen:create_alert' %}" class="btn btn-primary">Créer une alerte</a>
+    <a href="{% url 'citizen:declare_absence' %}" class="btn btn-secondary">Déclarer une absence</a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('.report-item, .observation-item').click(function() {
+            $(this).find('.report-details, .observation-details').slideToggle();
+        });
+    });
+</script>
+{% endblock %}

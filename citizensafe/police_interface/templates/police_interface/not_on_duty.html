@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Non en service{% endblock %}
+
+{% block page_title %}Non en service{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-md-10">
+    <div class="card bg-secondary border-0 mb-0">
+      <div class="card-header bg-transparent">
+        <h3 class="text-center my-4">Accès restreint</h3>
+      </div>
+      <div class="card-body px-lg-5 py-lg-5">
+        <div class="text-center text-muted mb-4">
+          <i class="ni ni-bell-55 ni-3x text-warning"></i>
+        </div>
+        <div class="alert alert-warning" role="alert">
+          <h4 class="alert-heading">Vous n'êtes pas en service</h4>
+          <p>Désolé, vous devez être en service pour accéder à l'optimisation des patrouilles.</p>
+          <hr>
+          <p class="mb-0">Veuillez vous mettre en service avant d'essayer d'accéder à cette fonctionnalité.</p>
+        </div>
+        <div class="text-center">
+          <a href="{% url 'police:dashboard' %}" class="btn btn-primary mt-4">
+            <i class="ni ni-bold-left mr-2"></i>Retour au tableau de bord
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Animation pour l'icône d'alerte
+  document.addEventListener('DOMContentLoaded', function() {
+    const alertIcon = document.querySelector('.ni-bell-55');
+    alertIcon.classList.add('animate__animated', 'animate__swing');
+    
+    setInterval(() => {
+      alertIcon.classList.add('animate__swing');
+      setTimeout(() => {
+        alertIcon.classList.remove('animate__swing');
+      }, 1000);
+    }, 3000);
+  });
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+{% endblock %}

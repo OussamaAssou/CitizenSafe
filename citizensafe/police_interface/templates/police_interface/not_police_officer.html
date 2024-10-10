@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Accès non autorisé{% endblock %}
+
+{% block page_title %}Accès non autorisé{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-md-10">
+    <div class="card bg-secondary border-0 mb-0">
+      <div class="card-header bg-transparent">
+        <h3 class="text-center my-4">Accès restreint</h3>
+      </div>
+      <div class="card-body px-lg-5 py-lg-5">
+        <div class="text-center text-muted mb-4">
+          <i class="ni ni-lock-circle-open ni-3x text-danger"></i>
+        </div>
+        <div class="alert alert-danger" role="alert">
+          <h4 class="alert-heading">Accès non autorisé</h4>
+          <p>Désolé, vous n'avez pas les autorisations nécessaires pour accéder à cette page.</p>
+          <hr>
+          <p class="mb-0">Cette page est réservée aux officiers de police. Si vous pensez qu'il s'agit d'une erreur, veuillez contacter l'administrateur du système.</p>
+        </div>
+        <div class="text-center">
+          <a href="{% url 'home' %}" class="btn btn-primary mt-4">
+            <i class="ni ni-bold-left mr-2"></i>Retour à l'accueil
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Animation pour l'icône de verrouillage
+  document.addEventListener('DOMContentLoaded', function() {
+    const lockIcon = document.querySelector('.ni-lock-circle-open');
+    lockIcon.classList.add('animate__animated', 'animate__shakeX');
+    
+    setInterval(() => {
+      lockIcon.classList.add('animate__shakeX');
+      setTimeout(() => {
+        lockIcon.classList.remove('animate__shakeX');
+      }, 1000);
+    }, 3000);
+  });
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+{% endblock %}

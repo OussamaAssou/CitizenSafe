@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Optimisation des patrouilles{% endblock %}
+
+{% block content %}
+<h1>Optimisation des patrouilles</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Officier</th>
+            <th>Zone assignée</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for patrol in optimized_patrols %}
+            <tr>
+                <td>{{ patrol.officer.user.get_full_name }}</td>
+                <td>{{ patrol.location }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="2">Aucune patrouille optimisée pour le moment.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

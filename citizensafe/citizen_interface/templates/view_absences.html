@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes absences déclarées{% endblock %}
+
+{% block content %}
+<h1>Mes absences déclarées</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date de début</th>
+            <th>Date de fin</th>
+            <th>Statut</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for absence in absences %}
+            <tr>
+                <td>{{ absence.start_date }}</td>
+                <td>{{ absence.end_date }}</td>
+                <td>{% if absence.is_active %}Active{% else %}Terminée{% endif %}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="3">Aucune absence déclarée.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'citizen:declare_absence' %}" class="btn btn-primary">Déclarer une nouvelle absence</a>
+{% endblock %}

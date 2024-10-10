@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Créer un rapport d'incident{% endblock %}
+
+{% block page_title %}Créer un rapport d'incident{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-xl-8 order-xl-1">
+    <div class="card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col-8">
+            <h3 class="mb-0">Nouveau rapport d'incident</h3>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="form-group">
+              <label class="form-control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="ni {% if field.name == 'incident_type' %}ni-tag{% elif field.name == 'description' %}ni-align-left-2{% elif field.name == 'location' %}ni-pin-3{% else %}ni-circle-08{% endif %}"></i>
+                  </span>
+                </div>
+                {{ field }}
+              </div>
+              {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+              {% endif %}
+              {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <div class="row align-items-center">
+            <div class="col-8">
+              <button type="submit" class="btn btn-primary my-4">Enregistrer le rapport</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Ajouter la classe form-control à tous les champs de formulaire
+    var formFields = document.querySelectorAll('input[type="text"], input[type="datetime-local"], select, textarea');
+    formFields.forEach(function(field) {
+      field.classList.add('form-control');
+    });
+
+    // Ajouter la classe custom-select aux champs select
+    var selectFields = document.querySelectorAll('select');
+    selectFields.forEach(function(field) {
+      field.classList.add('custom-select');
+    });
+
+    // Ajouter des classes spécifiques pour les champs de date et heure
+    var dateTimeFields = document.querySelectorAll('input[type="datetime-local"]');
+    dateTimeFields.forEach(function(field) {
+      field.classList.add('form-control', 'datetimepicker');
+    });
+
+    // Initialiser un datepicker si nécessaire (exemple avec flatpickr)
+    // Assurez-vous d'inclure la bibliothèque flatpickr dans votre projet
+    if (typeof flatpickr !== 'undefined') {
+      flatpickr(".datetimepicker", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+      });
+    }
+  });
+</script>
+{% endblock %}

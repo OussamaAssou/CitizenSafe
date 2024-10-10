@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de bord citoyen{% endblock %}
+
+{% block page_title %}Tableau de bord citoyen{% endblock %}
+
+{% block content %}
+
+<!-- Nouveau bloc pour le statut de présence -->
+<div class="row mb-4">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="alert alert-{% if is_present %}success{% else %}warning{% endif %} text-center" role="alert">
+          <h4 class="alert-heading">
+            {% if is_present %}
+              <i class="ni ni-building mr-2"></i>Présent au domicile
+            {% else %}
+              <i class="ni ni-world mr-2"></i>Absent du domicile
+            {% endif %}
+          </h4>
+          <p class="mb-0">
+            {% if is_present %}
+              Vous êtes actuellement signalé comme présent à votre domicile.
+            {% else %}
+              Vous êtes actuellement signalé comme absent de votre domicile.
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xl-6">
+    <div class="card">
+      <div class="card-header border-0">
+        <div class="row align-items-center">
+          <div class="col">
+            <h3 class="mb-0">Dernières alertes</h3>
+          </div>
+          <div class="col text-right">
+            <a href="{% url 'citizen:create_alert' %}" class="btn btn-sm btn-primary">Créer une alerte</a>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table align-items-center table-flush">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">Type</th>
+              <th scope="col">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for alert in user_alerts %}
+              <tr>
+                <td>{{ alert.get_alert_type_display }}</td>
+                <td>{{ alert.timestamp|date:"d/m/Y H:i" }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="2">Aucune alerte récente.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-6">
+    <div class="card">
+      <div class="card-header border-0">
+        <div class="row align-items-center">
+          <div class="col">
+            <h3 class="mb-0">Conseils de sécurité</h3>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        {% for tip in safety_tips %}
+          <div class="mb-3">
+            <h5>{{ tip.title }}</h5>
+            <p class="text-sm text-muted">{{ tip.content }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-xl-6">
+    <div class="card">
+      <div class="card-header border-0">
+        <h3 class="mb-0">Derniers rapports de police</h3>
+      </div>
+      <div class="list-group list-group-flush" id="police-reports">
+        {% for report in police_reports %}
+          <div class="list-group-item report-item">
+            <div class="row align-items-center">
+              <div class="col-auto">
+                <i class="ni ni-bell-55 text-yellow"></i>
+              </div>
+              <div class="col ml--2">
+                <h4 class="mb-0">{{ report.get_incident_type_display }}</h4>
+                <small>{{ report.reporting_officer.rank }} {{ report.reporting_officer.user.get_full_name }} - {{ report.timestamp|date:"d/m/Y H:i" }}</small>
+                <div class="report-details mt-2" style="display: none;">
+                  <p class="text-sm mb-0">{{ report.description }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="list-group-item">Aucun rapport récent.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-6">
+    <div class="card">
+      <div class="card-header border-0">
+        <h3 class="mb-0">Dernières observations des facteurs</h3>
+      </div>
+      <div class="list-group list-group-flush" id="postman-observations">
+        {% for observation in postman_observations %}
+          <div class="list-group-item observation-item">
+            <div class="row align-items-center">
+              <div class="col-auto">
+                <i class="ni ni-delivery-fast text-info"></i>
+              </div>
+              <div class="col ml--2">
+                <h4 class="mb-0">{{ observation.get_observation_type_display }}</h4>
+                <small>{{ observation.postman.employee_id }} {{ observation.postman.user.get_full_name }} - {{ observation.timestamp|date:"d/m/Y H:i" }}</small>
+                <div class="observation-details mt-2" style="display: none;">
+                  <p class="text-sm mb-0">{{ observation.description }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="list-group-item">Aucune observation récente.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-12">
+    <a href="{% url 'citizen:declare_absence' %}" class="btn btn-primary">Déclarer une absence</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  $(document).ready(function() {
+    $('.report-item, .observation-item').click(function() {
+      $(this).find('.report-details, .observation-details').slideToggle();
+    });
+  });
+</script>
+{% endblock %}

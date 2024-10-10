@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Profil Utilisateur{% endblock %}
+
+{% block page_title %}Profil Utilisateur{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-xl-8 order-xl-1">
+    <div class="card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col-8">
+            <h3 class="mb-0">Modifier le profil </h3>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <h6 class="heading-small text-muted mb-4">Informations générales</h6>
+          <div class="pl-lg-4">
+            {% for field in user_form %}
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                      <div class="invalid-feedback d-block">
+                        {% for error in field.errors %}
+                          {{ error }}
+                        {% endfor %}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          
+          {% if profile_form %}
+            <hr class="my-4" />
+            <h6 class="heading-small text-muted mb-4">Informations spécifiques</h6>
+            <div class="pl-lg-4">
+              {% for field in profile_form %}
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                      {{ field }}
+                      {% if field.errors %}
+                        <div class="invalid-feedback d-block">
+                          {% for error in field.errors %}
+                            {{ error }}
+                          {% endfor %}
+                        </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          
+          <div class="row align-items-center">
+            <div class="col-8">
+              <button type="submit" class="btn btn-primary my-4">Mettre à jour le profil</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Ajouter la classe form-control à tous les champs de formulaire
+    var formFields = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], select, textarea');
+    formFields.forEach(function(field) {
+      field.classList.add('form-control');
+    });
+  });
+</script>
+{% endblock %}

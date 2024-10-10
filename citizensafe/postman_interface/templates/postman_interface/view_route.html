@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Ma route{% endblock %}
+
+{% block page_title %}Ma route{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-xl-12">
+    <div class="card">
+      <div class="card-header border-0">
+        <div class="row align-items-center">
+          <div class="col">
+            <h3 class="mb-0">Itinéraire de livraison</h3>
+          </div>
+          <div class="col text-right">
+            <a href="#" class="btn btn-sm btn-primary">Imprimer l'itinéraire</a>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table align-items-center table-flush">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">Adresse</th>
+              <th scope="col">Heure prévue</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for stop in route %}
+              <tr>
+                <td>{{ stop.address }}</td>
+                <td>{{ stop.time }}</td>
+                <td>
+                  <a href="#" class="btn btn-sm btn-info" data-toggle="tooltip" data-original-title="Voir détails">
+                    <i class="ni ni-zoom-split-in"></i>
+                  </a>
+                  <a href="#" class="btn btn-sm btn-warning" data-toggle="tooltip" data-original-title="Signaler un problème">
+                    <i class="ni ni-bell-55"></i>
+                  </a>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="3" class="text-center">Aucune route planifiée pour aujourd'hui.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-xl-12">
+    <div class="card bg-gradient-default">
+      <div class="card-body">
+        <h3 class="text-white">Rappels importants :</h3>
+        <ul class="text-white">
+          <li>Assurez-vous d'avoir tous les colis nécessaires avant de partir.</li>
+          <li>Respectez les règles de sécurité routière.</li>
+          <li>En cas de problème, contactez immédiatement votre superviseur.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  $(document).ready(function() {
+    // Initialiser les tooltips
+    $('[data-toggle="tooltip"]').tooltip();
+
+    // Vous pouvez ajouter ici du JavaScript supplémentaire si nécessaire
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Historique des observations{% endblock %}
+
+{% block content %}
+<h1>Historique des observations</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Type d'observation</th>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Statut</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for observation in observations %}
+            <tr>
+                <td>{{ observation.get_observation_type_display }}</td>
+                <td>{{ observation.timestamp }}</td>
+                <td>{{ observation.description }}</td>
+                <td>{% if observation.is_verified %}Vérifiée{% else %}En attente{% endif %}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="4">Aucune observation dans l'historique.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
