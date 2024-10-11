@@ -16,6 +16,9 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 AUTH_USER_MODEL = 'citizen_interface.User'
 
+TIME_ZONE = 'Europe/Paris'
+USE_TZ = True
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin', # Interface d'administration de Django

@@ -27,7 +27,7 @@ def create_observation(request):
             observation.concerned_citizen = form.cleaned_data['concerned_citizen']
             
             observation.save()
-            messages.success(request, 'Observation créée avec succès.')
+            messages.success(request, 'Observation créée avec succès.', extra_tags='postman')
             return redirect('postman:dashboard')
     else:
         form = ObservationForm()

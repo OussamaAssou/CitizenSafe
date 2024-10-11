@@ -61,7 +61,7 @@ def create_alert(request):
             alert = form.save(commit=False)
             alert.citizen = request.user
             alert.save()
-            messages.success(request, 'Alerte créée avec succès.')
+            messages.success(request, 'Alerte créée avec succès.', extra_tags='citizen')
             return redirect('citizen:dashboard')
         else:
             logger.warning(f"Formulaire d'alerte invalide : {form.errors}")
@@ -87,7 +87,7 @@ def profile(request):
         form = CitizenProfileForm(request.POST, instance=request.user.citizenprofile)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Profil mis à jour avec succès.')
+            messages.success(request, 'Profil mis à jour avec succès.', extra_tags='citizen')
             return redirect('citizen_profile')
     else:
         form = CitizenProfileForm(instance=request.user.citizenprofile)
@@ -107,9 +107,9 @@ def declare_absence(request):
                 absence = AbsenceDeclaration.objects.get(id=absence_id, citizen=request.user)
                 absence.is_active = False
                 absence.save()
-                messages.success(request, "L'absence a été annulée avec succès.")
+                messages.success(request, "L'absence a été annulée avec succès.", extra_tags='citizen')
             except AbsenceDeclaration.DoesNotExist:
-                messages.error(request, "L'absence n'a pas pu être annulée.")
+                messages.error(request, "L'absence n'a pas pu être annulée.", extra_tags='citizen')
             return redirect('citizen:declare_absence')
         
         form = AbsenceDeclarationForm(request.POST)
@@ -117,7 +117,7 @@ def declare_absence(request):
             absence = form.save(commit=False)
             absence.citizen = request.user
             absence.save()
-            messages.success(request, 'Votre absence a été déclarée avec succès.')
+            messages.success(request, 'Votre absence a été déclarée avec succès.', extra_tags='citizen')
             return redirect('citizen:dashboard')
     else:
         form = AbsenceDeclarationForm()

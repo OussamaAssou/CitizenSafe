@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
+import pytz
 from django.contrib.auth import get_user_model
 from .models import Patrol, IncidentReport, PoliceOfficer
 from .forms import PatrolForm, IncidentReportForm
@@ -50,7 +51,7 @@ def dashboard(request):
         }
         return render(request, 'police_interface/dashboard.html', context)
     except PoliceOfficer.DoesNotExist:
-        messages.error(request, "Vous n'êtes pas enregistré comme officier de police.")
+        messages.error(request, "Vous n'êtes pas enregistré comme officier de police.", extra_tags='police')
         return redirect('home')  # Ou une autre page appropriée
 
 @login_required
@@ -60,9 +61,9 @@ def toggle_duty_status(request):
         officer.is_on_duty = not officer.is_on_duty
         officer.save()
         status = "en service" if officer.is_on_duty else "hors service"
-        messages.success(request, f"Vous êtes maintenant {status}.")
+        messages.success(request, f"Vous êtes maintenant {status}.", extra_tags='police')
     except PoliceOfficer.DoesNotExist:
-        messages.error(request, "Vous n'êtes pas enregistré comme officier de police.")
+        messages.error(request, "Vous n'êtes pas enregistré comme officier de police.", extra_tags='police')
     return redirect('police:dashboard')
 
 @login_required
@@ -79,7 +80,8 @@ def patrol_optimization(request):
         minute = int(request.POST.get('minute', 0))
         top_n = int(request.POST.get('top_n', 5))
     else:
-        current_time = timezone.now()
+        paris_tz = pytz.timezone('Europe/Paris')
+        current_time = timezone.now().astimezone(paris_tz)
         hour = current_time.hour
         minute = current_time.minute
         top_n = 5
@@ -138,7 +140,7 @@ def create_incident_report(request):
                 report.concerned_citizen = concerned_citizen
             
             report.save()
-            messages.success(request, 'Rapport d\'incident créé avec succès.')
+            messages.success(request, 'Rapport d\'incident créé avec succès.', extra_tags='police')
             return redirect('police:dashboard')
     else:
         form = IncidentReportForm()
